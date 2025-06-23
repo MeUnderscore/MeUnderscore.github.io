@@ -1,0 +1,37 @@
+{
+  "name": "web-development-learning-hub",
+  "version": "1.0.0",
+  "description": "An interactive website for learning frontend and backend web development",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "web-development",
+    "learning",
+    "frontend",
+    "backend",
+    "html",
+    "css",
+    "javascript",
+    "education",
+    "interactive"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/MeUnderscore.github.io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/MeUnderscore.github.io/issues"
+  },
+  "homepage": "https://yourusername.github.io/MeUnderscore.github.io",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
