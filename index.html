@@ -182,18 +182,20 @@
             });
         }
 
-        drawingGrid.addEventListener('mousedown', () => {
+        // Global mouse event listeners to ensure proper state tracking
+        document.addEventListener('mouseup', () => {
+            isDrawing = false;
+            lastDrawnCell = null;
+        });
+
+        document.addEventListener('mouseleave', () => {
+            isDrawing = false;
+            lastDrawnCell = null;
+        });
+
+        drawingGrid.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent default behavior
             isDrawing = true;
-        });
-
-        drawingGrid.addEventListener('mouseup', () => {
-            isDrawing = false;
-            lastDrawnCell = null;
-        });
-
-        drawingGrid.addEventListener('mouseleave', () => {
-            isDrawing = false;
-            lastDrawnCell = null;
         });
 
         cells.forEach(cell => {
@@ -208,7 +210,8 @@
                 }
             });
             
-            cell.addEventListener('mousedown', () => {
+            cell.addEventListener('mousedown', (e) => {
+                e.preventDefault(); // Prevent default behavior
                 drawOnCell(cell);
                 lastDrawnCell = cell;
             });
