@@ -306,21 +306,116 @@ const hiddenSize = 64; // Hidden layer size
 const outputSize = 10; // 10 output neurons (one for each digit 0-9)
 const neuralNetwork = new SimpleNeuralNetwork(inputSize, hiddenSize, outputSize);
 
-// Training data (you can expand this with more examples)
-const trainingData = [
-    // Add your training examples here
-    // Example: { input: gridToInput(), target: createTarget(5) }
-];
+// Load training data from localStorage
+let trainingData = JSON.parse(localStorage.getItem('neuralNetworkTrainingData')) || [];
+
+// Save training data to localStorage
+function saveTrainingData() {
+    localStorage.setItem('neuralNetworkTrainingData', JSON.stringify(trainingData));
+}
+
+// Add training example for a specific digit
+function addTrainingExample(digit) {
+    const input = gridToInput();
+    const target = createTarget(digit);
+    
+    trainingData.push({ input, target });
+    saveTrainingData();
+    
+    console.log(`Added training example for digit ${digit}. Total examples: ${trainingData.length}`);
+    
+    // Show feedback to user
+    const resultDiv = document.getElementById('predictionResult') || createResultDiv();
+    resultDiv.textContent = `Added training example for ${digit}. Total: ${trainingData.length}`;
+    resultDiv.style.color = '#4CAF50';
+    
+    setTimeout(() => {
+        resultDiv.textContent = '';
+    }, 2000);
+}
+
+// Create result div if it doesn't exist
+function createResultDiv() {
+    const div = document.createElement('div');
+    div.id = 'predictionResult';
+    div.style.marginTop = '15px';
+    div.style.padding = '10px';
+    div.style.fontSize = '18px';
+    div.style.fontWeight = 'bold';
+    div.style.textAlign = 'center';
+    div.style.minHeight = '30px';
+    document.querySelector('.drawing-container').appendChild(div);
+    return div;
+}
 
 // Train the network
 function trainNetwork() {
-    console.log('Training network...');
-    for (let epoch = 0; epoch < 100; epoch++) {
-        for (const data of trainingData) {
-            neuralNetwork.train(data.input, data.target);
-        }
+    if (trainingData.length === 0) {
+        alert('Please add some training examples first!');
+        return;
     }
-    console.log('Training complete!');
+    
+    const trainButton = document.getElementById('trainButton') || createTrainButton();
+    const resultDiv = document.getElementById('predictionResult') || createResultDiv();
+    
+    trainButton.disabled = true;
+    trainButton.textContent = 'Training...';
+    
+    // Train in batches to avoid blocking the UI
+    let epoch = 0;
+    const totalEpochs = 100;
+    
+    function trainBatch() {
+        for (let i = 0; i < 10; i++) { // Train 10 epochs at a time
+            if (epoch >= totalEpochs) {
+                resultDiv.textContent = 'Training complete!';
+                resultDiv.style.color = '#4CAF50';
+                trainButton.disabled = false;
+                trainButton.textContent = 'Train';
+                return;
+            }
+            
+            for (const data of trainingData) {
+                neuralNetwork.train(data.input, data.target);
+            }
+            epoch++;
+        }
+        
+        resultDiv.textContent = `Training... ${epoch}/${totalEpochs} epochs complete`;
+        resultDiv.style.color = '#FF9800';
+        setTimeout(trainBatch, 10); // Continue training after 10ms
+    }
+    
+    trainBatch();
+}
+
+// Create train button if it doesn't exist
+function createTrainButton() {
+    const button = document.createElement('button');
+    button.id = 'trainButton';
+    button.textContent = 'Train';
+    button.style.marginTop = '10px';
+    button.style.padding = '10px 20px';
+    button.style.fontSize = '16px';
+    button.style.backgroundColor = '#FF9800';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.borderRadius = '5px';
+    button.style.cursor = 'pointer';
+    button.style.transition = 'background-color 0.3s';
+    
+    button.addEventListener('mouseenter', () => {
+        button.style.backgroundColor = '#F57C00';
+    });
+    
+    button.addEventListener('mouseleave', () => {
+        button.style.backgroundColor = '#FF9800';
+    });
+    
+    button.addEventListener('click', trainNetwork);
+    
+    document.querySelector('.controls').appendChild(button);
+    return button;
 }
 
 // Predict the digit
@@ -344,69 +439,42 @@ function predictDigit() {
     return { digit: maxIndex, confidence: maxValue, probabilities: prediction };
 }
 
-// Add prediction button functionality
-document.getElementById('predictButton').addEventListener('click', () => {
-    const result = predictDigit();
-    document.getElementById('predictionResult').textContent = 
-        `Predicted: ${result.digit} (Confidence: ${(result.confidence * 100).toFixed(1)}%)`;
-});
-
-// Add training example functionality
-document.getElementById('addTrainingButton').addEventListener('click', () => {
-    const digitInput = document.getElementById('trainingDigit');
-    const digit = parseInt(digitInput.value);
-    
-    if (isNaN(digit) || digit < 0 || digit > 9) {
-        alert('Please enter a valid digit (0-9)');
-        return;
+// Add event listeners for digit buttons
+document.addEventListener('DOMContentLoaded', () => {
+    // Add training example buttons (0-9)
+    for (let i = 0; i <= 9; i++) {
+        const button = document.getElementById(`${i}Button`);
+        if (button) {
+            button.addEventListener('click', () => addTrainingExample(i));
+        }
     }
     
-    const input = gridToInput();
-    const target = createTarget(digit);
-    
-    trainingData.push({ input, target });
-    
-    document.getElementById('trainingStatus').textContent = 
-        `Added training example for digit ${digit}. Total examples: ${trainingData.length}`;
-    
-    digitInput.value = '';
-});
-
-// Train network functionality
-document.getElementById('trainButton').addEventListener('click', () => {
-    if (trainingData.length === 0) {
-        alert('Please add some training examples first!');
-        return;
-    }
-    
-    const trainButton = document.getElementById('trainButton');
-    const trainingStatus = document.getElementById('trainingStatus');
-    
-    trainButton.disabled = true;
-    trainButton.textContent = 'Training...';
-    
-    // Train in batches to avoid blocking the UI
-    let epoch = 0;
-    const totalEpochs = 100;
-    
-    function trainBatch() {
-        for (let i = 0; i < 10; i++) { // Train 10 epochs at a time
-            if (epoch >= totalEpochs) {
-                trainingStatus.textContent = 'Training complete!';
-                trainButton.disabled = false;
-                trainButton.textContent = 'Train Network';
+    // Add guess button functionality
+    const guessButton = document.getElementById('guessButton');
+    if (guessButton) {
+        guessButton.addEventListener('click', () => {
+            if (trainingData.length === 0) {
+                alert('Please add some training examples first!');
                 return;
             }
             
-            for (const data of trainingData) {
-                neuralNetwork.train(data.input, data.target);
-            }
-            epoch++;
-        }
-        
-        trainingStatus.textContent = `Training... ${epoch}/${totalEpochs} epochs complete`;
-        setTimeout(trainBatch, 10); // Continue training after 10ms
+            const result = predictDigit();
+            const resultDiv = document.getElementById('predictionResult') || createResultDiv();
+            resultDiv.textContent = `Predicted: ${result.digit} (Confidence: ${(result.confidence * 100).toFixed(1)}%)`;
+            resultDiv.style.color = '#333';
+        });
     }
     
-    trainBatch();
+    // Create train button
+    createTrainButton();
+    
+    // Show initial training data count
+    if (trainingData.length > 0) {
+        const resultDiv = createResultDiv();
+        resultDiv.textContent = `Loaded ${trainingData.length} training examples`;
+        resultDiv.style.color = '#2196F3';
+        setTimeout(() => {
+            resultDiv.textContent = '';
+        }, 2000);
+    }
 }); 
