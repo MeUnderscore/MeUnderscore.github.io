@@ -393,24 +393,8 @@ function trainNetwork() {
 function createTrainButton() {
     const button = document.createElement('button');
     button.id = 'trainButton';
+    button.className = 'train-button';
     button.textContent = 'Train';
-    button.style.marginTop = '10px';
-    button.style.padding = '10px 20px';
-    button.style.fontSize = '16px';
-    button.style.backgroundColor = '#FF9800';
-    button.style.color = 'white';
-    button.style.border = 'none';
-    button.style.borderRadius = '5px';
-    button.style.cursor = 'pointer';
-    button.style.transition = 'background-color 0.3s';
-    
-    button.addEventListener('mouseenter', () => {
-        button.style.backgroundColor = '#F57C00';
-    });
-    
-    button.addEventListener('mouseleave', () => {
-        button.style.backgroundColor = '#FF9800';
-    });
     
     button.addEventListener('click', trainNetwork);
     
