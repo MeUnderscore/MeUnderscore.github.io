@@ -22,7 +22,7 @@ cells.forEach((cell, index) => {
 
 // Pre-calculate adjacent cell offsets for circular brush
 const brushOffsets = [];
-const radius = 7;
+const radius = 6;
 for (let dr = -radius; dr <= radius; dr++) {
     for (let dc = -radius; dc <= radius; dc++) {
         if (dr * dr + dc * dc <= radius * radius) {
