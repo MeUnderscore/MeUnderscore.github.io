@@ -27,7 +27,6 @@ for (let dr = -radius; dr <= radius; dr++) {
     for (let dc = -radius; dc <= radius; dc++) {
         // Check if this cell is within the circular radius
         if (dr * dr + dc * dc <= radius * radius) {
-            // Exclude the furthest cells in the 4 cardinal directions
             if (!((dr === radius && dc === 0) || 
                   (dr === 0 && dc === radius) || 
                   (dr === -radius && dc === 0) || 
