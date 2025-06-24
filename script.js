@@ -28,10 +28,10 @@ for (let dr = -radius; dr <= radius; dr++) {
         // Check if this cell is within the circular radius
         if (dr * dr + dc * dc <= radius * radius) {
             // Exclude the furthest cells in the 4 cardinal directions
-            const isExcluded = (dr === radius && dc === 0) || 
-                              (dr === 0 && dc === radius) || 
-                              (dr === -radius && dc === 0) || 
-                              (dr === 0 && dc === -radius);
+            const isExcluded = (dr === (radius - 1) && dc === 0) || 
+                              (dr === 0 && dc === (radius - 1)) || 
+                              (dr === -(radius - 1) && dc === 0) || 
+                              (dr === 0 && dc === -(radius - 1));
             
             if (!isExcluded) {
                 brushOffsets.push({ dr, dc });
