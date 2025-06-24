@@ -60,6 +60,7 @@
 
         // Drawing functionality
         let isDrawing = false;
+        let lastDrawnCell = null;
         const cells = document.querySelectorAll('.grid-cell');
 
         // Function to get adjacent cells
@@ -90,6 +91,48 @@
             return adjacent;
         }
 
+        // Function to get cells between two positions using Bresenham's line algorithm
+        function getCellsBetween(cell1, cell2) {
+            const index1 = Array.from(cells).indexOf(cell1);
+            const index2 = Array.from(cells).indexOf(cell2);
+            const row1 = Math.floor(index1 / 128);
+            const col1 = index1 % 128;
+            const row2 = Math.floor(index2 / 128);
+            const col2 = index2 % 128;
+            
+            const cellsBetween = [];
+            
+            let x0 = col1, y0 = row1;
+            let x1 = col2, y1 = row2;
+            
+            const dx = Math.abs(x1 - x0);
+            const dy = Math.abs(y1 - y0);
+            const sx = x0 < x1 ? 1 : -1;
+            const sy = y0 < y1 ? 1 : -1;
+            let err = dx - dy;
+            
+            while (true) {
+                if (x0 >= 0 && x0 < 128 && y0 >= 0 && y0 < 128) {
+                    const cellIndex = y0 * 128 + x0;
+                    cellsBetween.push(cells[cellIndex]);
+                }
+                
+                if (x0 === x1 && y0 === y1) break;
+                
+                const e2 = 2 * err;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x0 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y0 += sy;
+                }
+            }
+            
+            return cellsBetween;
+        }
+
         // Function to draw on a cell and its adjacent cells
         function drawOnCell(cell) {
             cell.classList.add('drawn');
@@ -99,27 +142,43 @@
             });
         }
 
+        // Function to draw a line between two cells
+        function drawLineBetween(cell1, cell2) {
+            const cellsBetween = getCellsBetween(cell1, cell2);
+            cellsBetween.forEach(cell => {
+                drawOnCell(cell);
+            });
+        }
+
         drawingGrid.addEventListener('mousedown', () => {
             isDrawing = true;
         });
 
         drawingGrid.addEventListener('mouseup', () => {
             isDrawing = false;
+            lastDrawnCell = null;
         });
 
         drawingGrid.addEventListener('mouseleave', () => {
             isDrawing = false;
+            lastDrawnCell = null;
         });
 
         cells.forEach(cell => {
             cell.addEventListener('mouseenter', () => {
                 if (isDrawing) {
-                    drawOnCell(cell);
+                    if (lastDrawnCell && lastDrawnCell !== cell) {
+                        drawLineBetween(lastDrawnCell, cell);
+                    } else {
+                        drawOnCell(cell);
+                    }
+                    lastDrawnCell = cell;
                 }
             });
             
             cell.addEventListener('mousedown', () => {
                 drawOnCell(cell);
+                lastDrawnCell = cell;
             });
         });
     </script>
