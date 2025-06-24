@@ -156,7 +156,12 @@
         function drawLineBetween(cell1, cell2) {
             const cellsBetween = getCellsBetween(cell1, cell2);
             cellsBetween.forEach(cell => {
-                drawOnCell(cell);
+                // Always draw on interpolated cells, even if already drawn
+                cell.classList.add('drawn');
+                const adjacent = getAdjacentCells(cell);
+                adjacent.forEach(adjCell => {
+                    adjCell.classList.add('drawn');
+                });
             });
         }
 
