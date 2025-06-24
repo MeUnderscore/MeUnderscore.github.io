@@ -41,11 +41,28 @@
         .grid-cell.drawn {
             background-color: black;
         }
+
+        .clear-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clear-button:hover {
+            background-color: #cc0000;
+        }
     </style>
 </head>
 <body>
     <div class="drawing-container">
         <div class="drawing-grid" id="drawingGrid"></div>
+        <button class="clear-button" id="clearButton">Clear</button>
     </div>
 
     <script>
@@ -194,6 +211,13 @@
             cell.addEventListener('mousedown', () => {
                 drawOnCell(cell);
                 lastDrawnCell = cell;
+            });
+        });
+
+        // Clear button functionality
+        document.getElementById('clearButton').addEventListener('click', () => {
+            cells.forEach(cell => {
+                cell.classList.remove('drawn');
             });
         });
     </script>
