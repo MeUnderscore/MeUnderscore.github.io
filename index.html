@@ -69,20 +69,21 @@
             const row = Math.floor(index / 128);
             const col = index % 128;
             
-            // Check all 8 adjacent cells (including diagonals)
-            const directions = [
-                [-1, -1], [-1, 0], [-1, 1],
-                [0, -1],           [0, 1],
-                [1, -1],  [1, 0],  [1, 1]
-            ];
+            // Create a circular brush with radius 2 (5 cells wide)
+            const radius = 2;
             
-            for (const [dr, dc] of directions) {
-                const newRow = row + dr;
-                const newCol = col + dc;
-                
-                if (newRow >= 0 && newRow < 128 && newCol >= 0 && newCol < 128) {
-                    const adjacentIndex = newRow * 128 + newCol;
-                    adjacent.push(cells[adjacentIndex]);
+            for (let dr = -radius; dr <= radius; dr++) {
+                for (let dc = -radius; dc <= radius; dc++) {
+                    // Check if this cell is within the circular radius
+                    if (dr * dr + dc * dc <= radius * radius) {
+                        const newRow = row + dr;
+                        const newCol = col + dc;
+                        
+                        if (newRow >= 0 && newRow < 128 && newCol >= 0 && newCol < 128) {
+                            const adjacentIndex = newRow * 128 + newCol;
+                            adjacent.push(cells[adjacentIndex]);
+                        }
+                    }
                 }
             }
             
