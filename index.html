@@ -62,6 +62,42 @@
         let isDrawing = false;
         const cells = document.querySelectorAll('.grid-cell');
 
+        // Function to get adjacent cells
+        function getAdjacentCells(cell) {
+            const adjacent = [];
+            const index = Array.from(cells).indexOf(cell);
+            const row = Math.floor(index / 128);
+            const col = index % 128;
+            
+            // Check all 8 adjacent cells (including diagonals)
+            const directions = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1],           [0, 1],
+                [1, -1],  [1, 0],  [1, 1]
+            ];
+            
+            for (const [dr, dc] of directions) {
+                const newRow = row + dr;
+                const newCol = col + dc;
+                
+                if (newRow >= 0 && newRow < 128 && newCol >= 0 && newCol < 128) {
+                    const adjacentIndex = newRow * 128 + newCol;
+                    adjacent.push(cells[adjacentIndex]);
+                }
+            }
+            
+            return adjacent;
+        }
+
+        // Function to draw on a cell and its adjacent cells
+        function drawOnCell(cell) {
+            cell.classList.add('drawn');
+            const adjacent = getAdjacentCells(cell);
+            adjacent.forEach(adjCell => {
+                adjCell.classList.add('drawn');
+            });
+        }
+
         drawingGrid.addEventListener('mousedown', () => {
             isDrawing = true;
         });
@@ -77,12 +113,12 @@
         cells.forEach(cell => {
             cell.addEventListener('mouseenter', () => {
                 if (isDrawing) {
-                    cell.classList.add('drawn');
+                    drawOnCell(cell);
                 }
             });
             
             cell.addEventListener('mousedown', () => {
-                cell.classList.add('drawn');
+                drawOnCell(cell);
             });
         });
     </script>
