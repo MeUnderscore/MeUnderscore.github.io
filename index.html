@@ -62,48 +62,54 @@
         let isDrawing = false;
         let lastDrawnCell = null;
         const cells = document.querySelectorAll('.grid-cell');
-
-        // Function to get adjacent cells
-        function getAdjacentCells(cell) {
-            const adjacent = [];
-            const index = Array.from(cells).indexOf(cell);
+        
+        // Pre-calculate cell positions for faster lookup
+        const cellPositions = new Map();
+        cells.forEach((cell, index) => {
             const row = Math.floor(index / 128);
             const col = index % 128;
+            cellPositions.set(cell, { row, col, index });
+        });
+
+        // Pre-calculate adjacent cell offsets for circular brush
+        const brushOffsets = [];
+        const radius = 2;
+        for (let dr = -radius; dr <= radius; dr++) {
+            for (let dc = -radius; dc <= radius; dc++) {
+                if (dr * dr + dc * dc <= radius * radius) {
+                    brushOffsets.push({ dr, dc });
+                }
+            }
+        }
+
+        // Function to get adjacent cells (optimized)
+        function getAdjacentCells(cell) {
+            const adjacent = [];
+            const pos = cellPositions.get(cell);
+            if (!pos) return adjacent;
             
-            // Create a circular brush with radius 2 (5 cells wide)
-            const radius = 2;
-            
-            for (let dr = -radius; dr <= radius; dr++) {
-                for (let dc = -radius; dc <= radius; dc++) {
-                    // Check if this cell is within the circular radius
-                    if (dr * dr + dc * dc <= radius * radius) {
-                        const newRow = row + dr;
-                        const newCol = col + dc;
-                        
-                        if (newRow >= 0 && newRow < 128 && newCol >= 0 && newCol < 128) {
-                            const adjacentIndex = newRow * 128 + newCol;
-                            adjacent.push(cells[adjacentIndex]);
-                        }
-                    }
+            for (const { dr, dc } of brushOffsets) {
+                const newRow = pos.row + dr;
+                const newCol = pos.col + dc;
+                
+                if (newRow >= 0 && newRow < 128 && newCol >= 0 && newCol < 128) {
+                    const adjacentIndex = newRow * 128 + newCol;
+                    adjacent.push(cells[adjacentIndex]);
                 }
             }
             
             return adjacent;
         }
 
-        // Function to get cells between two positions using Bresenham's line algorithm
+        // Optimized line drawing using Bresenham's algorithm
         function getCellsBetween(cell1, cell2) {
-            const index1 = Array.from(cells).indexOf(cell1);
-            const index2 = Array.from(cells).indexOf(cell2);
-            const row1 = Math.floor(index1 / 128);
-            const col1 = index1 % 128;
-            const row2 = Math.floor(index2 / 128);
-            const col2 = index2 % 128;
+            const pos1 = cellPositions.get(cell1);
+            const pos2 = cellPositions.get(cell2);
+            if (!pos1 || !pos2) return [];
             
             const cellsBetween = [];
-            
-            let x0 = col1, y0 = row1;
-            let x1 = col2, y1 = row2;
+            let x0 = pos1.col, y0 = pos1.row;
+            let x1 = pos2.col, y1 = pos2.row;
             
             const dx = Math.abs(x1 - x0);
             const dy = Math.abs(y1 - y0);
@@ -133,16 +139,20 @@
             return cellsBetween;
         }
 
-        // Function to draw on a cell and its adjacent cells
+        // Optimized drawing function
         function drawOnCell(cell) {
+            if (cell.classList.contains('drawn')) return; // Skip if already drawn
+            
             cell.classList.add('drawn');
             const adjacent = getAdjacentCells(cell);
             adjacent.forEach(adjCell => {
-                adjCell.classList.add('drawn');
+                if (!adjCell.classList.contains('drawn')) {
+                    adjCell.classList.add('drawn');
+                }
             });
         }
 
-        // Function to draw a line between two cells
+        // Optimized line drawing
         function drawLineBetween(cell1, cell2) {
             const cellsBetween = getCellsBetween(cell1, cell2);
             cellsBetween.forEach(cell => {
