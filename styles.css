@@ -65,4 +65,163 @@ body {
 
 .guess-button:hover {
     background-color: #4bcc00;
-} 
+}
+
+.zero-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.zero-button:hover {
+    background-color: #2735b3;
+}
+
+.one-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.one-button:hover {
+    background-color: #2735b3;
+}
+
+.two-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.two-button:hover {
+    background-color: #2735b3;
+}   
+
+.three-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;     
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.three-button:hover {
+    background-color: #2735b3;
+}
+
+.four-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;    
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.four-button:hover {
+    background-color: #2735b3;
+}
+
+.five-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;     
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.five-button:hover {
+    background-color: #2735b3;
+}
+
+.six-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;     
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.six-button:hover {
+    background-color: #2735b3;
+}
+
+.seven-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;     
+    cursor: pointer;
+    transition: background-color 0.3s;
+}  
+.seven-button:hover {
+    background-color: #2735b3;
+}
+
+.eight-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;         
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.eight-button:hover {
+    background-color: #2735b3;
+}
+
+.nine-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4454e4;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 5px;                 
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.nine-button:hover {
+    background-color: #2735b3;
+}
+
+
+
+
+
+
