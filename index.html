@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testing Page</title>
+    <title>Number Recognition Drawing</title>
     <style>
         body {
             margin: 0;
@@ -13,11 +13,80 @@
             justify-content: center;
             align-items: center;
             font-family: Arial, sans-serif;
-            font-size: 24px;
+            background-color: #f0f0f0;
+        }
+
+        .drawing-container {
+            text-align: center;
+        }
+
+        .drawing-grid {
+            width: 128px;
+            height: 128px;
+            border: 2px solid #333;
+            background-color: white;
+            cursor: crosshair;
+            display: grid;
+            grid-template-columns: repeat(128, 1px);
+            grid-template-rows: repeat(128, 1px);
+        }
+
+        .grid-cell {
+            width: 1px;
+            height: 1px;
+            background-color: white;
+            border: none;
+        }
+
+        .grid-cell.drawn {
+            background-color: black;
         }
     </style>
 </head>
 <body>
-    Testing...
+    <div class="drawing-container">
+        <h2>Draw a Number (0-9)</h2>
+        <div class="drawing-grid" id="drawingGrid"></div>
+        <p>Click and drag to draw</p>
+    </div>
+
+    <script>
+        // Create the 128x128 grid
+        const drawingGrid = document.getElementById('drawingGrid');
+        
+        for (let i = 0; i < 128 * 128; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            drawingGrid.appendChild(cell);
+        }
+
+        // Drawing functionality
+        let isDrawing = false;
+        const cells = document.querySelectorAll('.grid-cell');
+
+        drawingGrid.addEventListener('mousedown', () => {
+            isDrawing = true;
+        });
+
+        drawingGrid.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        drawingGrid.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
+        cells.forEach(cell => {
+            cell.addEventListener('mouseenter', () => {
+                if (isDrawing) {
+                    cell.classList.add('drawn');
+                }
+            });
+            
+            cell.addEventListener('mousedown', () => {
+                cell.classList.add('drawn');
+            });
+        });
+    </script>
 </body>
 </html> 
