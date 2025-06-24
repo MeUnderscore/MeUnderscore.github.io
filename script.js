@@ -355,7 +355,7 @@ function trainNetwork() {
         return;
     }
     
-    const trainButton = document.getElementById('trainButton') || createTrainButton();
+    const trainButton = document.getElementById('trainButton');
     const resultDiv = document.getElementById('predictionResult') || createResultDiv();
     
     trainButton.disabled = true;
@@ -387,19 +387,6 @@ function trainNetwork() {
     }
     
     trainBatch();
-}
-
-// Create train button if it doesn't exist
-function createTrainButton() {
-    const button = document.createElement('button');
-    button.id = 'trainButton';
-    button.className = 'train-button';
-    button.textContent = 'Train';
-    
-    button.addEventListener('click', trainNetwork);
-    
-    document.querySelector('.controls').appendChild(button);
-    return button;
 }
 
 // Predict the digit
@@ -449,8 +436,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Create train button
-    createTrainButton();
+    // Add train button functionality
+    const trainButton = document.getElementById('trainButton');
+    if (trainButton) {
+        trainButton.addEventListener('click', trainNetwork);
+    }
     
     // Show initial training data count
     if (trainingData.length > 0) {
