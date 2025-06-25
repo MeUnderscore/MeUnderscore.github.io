@@ -130,10 +130,12 @@ class DigitRecognizer:
             'hidden_sizes': self.model.hidden_layer_sizes,
             'output_size': self.model.n_outputs_,
             'activation': self.model.activation,
-            'weights1': self.model.coefs_[0].tolist(),
-            'weights2': self.model.coefs_[1].tolist(),
+            'weights1': self.model.coefs_[0].tolist(),  # Input -> Hidden1
+            'weights2': self.model.coefs_[1].tolist(),  # Hidden1 -> Hidden2
+            'weights3': self.model.coefs_[2].tolist(),  # Hidden2 -> Output
             'bias1': self.model.intercepts_[0].tolist(),
             'bias2': self.model.intercepts_[1].tolist(),
+            'bias3': self.model.intercepts_[2].tolist(),
             'classes': self.model.classes_.tolist()
         }
         
