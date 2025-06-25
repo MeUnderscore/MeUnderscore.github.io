@@ -217,6 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultDiv.textContent = `Added training example for ${i}. Total: ${trainingData.length}`;
                 resultDiv.style.color = '#4CAF50';
                 
+                // Clear the drawing area automatically
+                cells.forEach(cell => {
+                    cell.classList.remove('drawn');
+                });
+                
                 setTimeout(() => {
                     resultDiv.textContent = '';
                 }, 2000);
