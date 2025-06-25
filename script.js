@@ -165,22 +165,38 @@ document.getElementById('clearButton').addEventListener('click', () => {
     });
 });
 
-// Simple prediction function (placeholder for trained model)
-function predictDigit() {
+// Real prediction function using trained model
+async function predictDigit() {
     const input = gridToInput();
     
-    // This is a placeholder - will be replaced with actual model prediction
-    // For now, return a random prediction
-    const randomDigit = Math.floor(Math.random() * 10);
-    const randomConfidence = 0.5 + Math.random() * 0.5; // 50-100% confidence
-    
-    console.log('Prediction:', randomDigit, 'Confidence:', randomConfidence.toFixed(3));
-    
-    return { 
-        digit: randomDigit, 
-        confidence: randomConfidence, 
-        probabilities: new Array(10).fill(0.1).map((_, i) => i === randomDigit ? randomConfidence : (1 - randomConfidence) / 9)
-    };
+    try {
+        // Load model if not already loaded
+        if (!modelLoader.loaded) {
+            const loaded = await modelLoader.loadModel('digit_model.json');
+            if (!loaded) {
+                throw new Error('Failed to load model');
+            }
+        }
+        
+        // Make prediction using trained model
+        const result = modelLoader.predict(input);
+        console.log('Prediction:', result.digit, 'Confidence:', result.confidence.toFixed(3));
+        console.log('All probabilities:', result.probabilities.map(p => p.toFixed(3)));
+        
+        return result;
+    } catch (error) {
+        console.error('Prediction error:', error);
+        
+        // Fallback to random prediction if model fails
+        const randomDigit = Math.floor(Math.random() * 10);
+        const randomConfidence = 0.5 + Math.random() * 0.5;
+        
+        return { 
+            digit: randomDigit, 
+            confidence: randomConfidence, 
+            probabilities: new Array(10).fill(0.1).map((_, i) => i === randomDigit ? randomConfidence : (1 - randomConfidence) / 9)
+        };
+    }
 }
 
 // Convert grid to input format
@@ -193,47 +209,13 @@ function gridToInput() {
     return input;
 }
 
-// Add event listeners for digit buttons (for data collection)
+// Add event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    // Add training example buttons (0-9) - for data collection only
-    for (let i = 0; i <= 9; i++) {
-        const button = document.getElementById(`${i}Button`);
-        if (button) {
-            button.addEventListener('click', () => {
-                // Collect training data (for future use)
-                const input = gridToInput();
-                const target = new Array(10).fill(0);
-                target[i] = 1;
-                
-                // Store in localStorage for later extraction
-                let trainingData = JSON.parse(localStorage.getItem('neuralNetworkTrainingData')) || [];
-                trainingData.push({ input: [input], target: [target] });
-                localStorage.setItem('neuralNetworkTrainingData', JSON.stringify(trainingData));
-                
-                console.log(`Added training example for digit ${i}. Total: ${trainingData.length}`);
-                
-                // Show feedback
-                const resultDiv = document.getElementById('predictionResult') || createResultDiv();
-                resultDiv.textContent = `Added training example for ${i}. Total: ${trainingData.length}`;
-                resultDiv.style.color = '#4CAF50';
-                
-                // Clear the drawing area automatically
-                cells.forEach(cell => {
-                    cell.classList.remove('drawn');
-                });
-                
-                setTimeout(() => {
-                    resultDiv.textContent = '';
-                }, 2000);
-            });
-        }
-    }
-    
     // Add guess button functionality
     const guessButton = document.getElementById('guessButton');
     if (guessButton) {
-        guessButton.addEventListener('click', () => {
-            const result = predictDigit();
+        guessButton.addEventListener('click', async () => {
+            const result = await predictDigit();
             const resultDiv = document.getElementById('predictionResult') || createResultDiv();
             resultDiv.textContent = `Predicted: ${result.digit} (Confidence: ${(result.confidence * 100).toFixed(1)}%)`;
             resultDiv.style.color = '#333';
@@ -253,4 +235,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.drawing-container').appendChild(div);
         return div;
     }
+    
+    // Show loading message
+    const resultDiv = createResultDiv();
+    resultDiv.textContent = 'AI Model Loading...';
+    resultDiv.style.color = '#FF9800';
+    
+    // Pre-load the model
+    modelLoader.loadModel('digit_model.json').then(loaded => {
+        if (loaded) {
+            resultDiv.textContent = 'AI Ready! Draw a digit and click Guess.';
+            resultDiv.style.color = '#4CAF50';
+            setTimeout(() => {
+                resultDiv.textContent = '';
+            }, 3000);
+        } else {
+            resultDiv.textContent = 'Error loading AI model.';
+            resultDiv.style.color = '#f44336';
+        }
+    });
 }); 
