@@ -64,7 +64,7 @@ body {
 }
 
 .guess-button:hover {
-    background-color: #4bcc00;
+    background-color: #296b03;
 }
 
 .zero-button {
@@ -220,26 +220,6 @@ body {
     background-color: #2735b3;
 }
 
-.train-button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #FF9800;
-    color: white;
-    border: 2px solid #333;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.train-button:hover {
-    background-color: #F57C00;
-}
-
-.train-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
 
 
 
