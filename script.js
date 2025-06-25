@@ -165,258 +165,62 @@ document.getElementById('clearButton').addEventListener('click', () => {
     });
 });
 
-// Simple Neural Network for digit recognition
-class SimpleNeuralNetwork {
-    constructor(inputSize, hiddenSize, outputSize) {
-        this.inputSize = inputSize;
-        this.hiddenSize = hiddenSize;
-        this.outputSize = outputSize;
-        
-        // Initialize weights randomly
-        this.weights1 = this.randomMatrix(inputSize, hiddenSize);
-        this.weights2 = this.randomMatrix(hiddenSize, outputSize);
-        this.bias1 = this.randomMatrix(1, hiddenSize);
-        this.bias2 = this.randomMatrix(1, outputSize);
-        
-        this.learningRate = 0.1;
-    }
+// Simple prediction function (placeholder for trained model)
+function predictDigit() {
+    const input = gridToInput();
     
-    randomMatrix(rows, cols) {
-        const matrix = [];
-        for (let i = 0; i < rows; i++) {
-            matrix[i] = [];
-            for (let j = 0; j < cols; j++) {
-                matrix[i][j] = Math.random() * 2 - 1; // Random values between -1 and 1
-            }
-        }
-        return matrix;
-    }
+    // This is a placeholder - will be replaced with actual model prediction
+    // For now, return a random prediction
+    const randomDigit = Math.floor(Math.random() * 10);
+    const randomConfidence = 0.5 + Math.random() * 0.5; // 50-100% confidence
     
-    sigmoid(x) {
-        return 1 / (1 + Math.exp(-x));
-    }
+    console.log('Prediction:', randomDigit, 'Confidence:', randomConfidence.toFixed(3));
     
-    sigmoidDerivative(x) {
-        return x * (1 - x);
-    }
-    
-    forward(input) {
-        // Hidden layer
-        const hidden = this.multiply(input, this.weights1);
-        const hiddenWithBias = this.add(hidden, this.bias1);
-        const hiddenOutput = hiddenWithBias.map(row => row.map(val => this.sigmoid(val)));
-        
-        // Output layer
-        const output = this.multiply(hiddenOutput, this.weights2);
-        const outputWithBias = this.add(output, this.bias2);
-        const finalOutput = outputWithBias.map(row => row.map(val => this.sigmoid(val)));
-        
-        return { hiddenOutput, finalOutput };
-    }
-    
-    multiply(a, b) {
-        const result = [];
-        for (let i = 0; i < a.length; i++) {
-            result[i] = [];
-            for (let j = 0; j < b[0].length; j++) {
-                result[i][j] = 0;
-                for (let k = 0; k < a[0].length; k++) {
-                    result[i][j] += a[i][k] * b[k][j];
-                }
-            }
-        }
-        return result;
-    }
-    
-    add(a, b) {
-        return a.map((row, i) => row.map((val, j) => val + b[0][j]));
-    }
-    
-    transpose(matrix) {
-        const result = [];
-        for (let i = 0; i < matrix[0].length; i++) {
-            result[i] = [];
-            for (let j = 0; j < matrix.length; j++) {
-                result[i][j] = matrix[j][i];
-            }
-        }
-        return result;
-    }
-    
-    train(input, target) {
-        // Forward pass
-        const { hiddenOutput, finalOutput } = this.forward(input);
-        
-        // Calculate errors
-        const outputError = this.subtract(target, finalOutput);
-        const outputDelta = outputError.map(row => row.map(val => val * this.sigmoidDerivative(val)));
-        
-        const hiddenError = this.multiply(outputDelta, this.transpose(this.weights2));
-        const hiddenDelta = hiddenError.map(row => row.map(val => val * this.sigmoidDerivative(val)));
-        
-        // Update weights
-        const hiddenTranspose = this.transpose(hiddenOutput);
-        const inputTranspose = this.transpose(input);
-        
-        const weight2Update = this.multiply(hiddenTranspose, outputDelta);
-        const weight1Update = this.multiply(inputTranspose, hiddenDelta);
-        
-        this.weights2 = this.add(this.weights2, this.scalarMultiply(weight2Update, this.learningRate));
-        this.weights1 = this.add(this.weights1, this.scalarMultiply(weight1Update, this.learningRate));
-        
-        // Update biases
-        this.bias2 = this.add(this.bias2, this.scalarMultiply(outputDelta, this.learningRate));
-        this.bias1 = this.add(this.bias1, this.scalarMultiply(hiddenDelta, this.learningRate));
-    }
-    
-    subtract(a, b) {
-        return a.map((row, i) => row.map((val, j) => val - b[i][j]));
-    }
-    
-    scalarMultiply(matrix, scalar) {
-        return matrix.map(row => row.map(val => val * scalar));
-    }
-    
-    predict(input) {
-        const { finalOutput } = this.forward(input);
-        return finalOutput[0];
-    }
+    return { 
+        digit: randomDigit, 
+        confidence: randomConfidence, 
+        probabilities: new Array(10).fill(0.1).map((_, i) => i === randomDigit ? randomConfidence : (1 - randomConfidence) / 9)
+    };
 }
 
-// Convert grid to neural network input
+// Convert grid to input format
 function gridToInput() {
     const input = [];
     for (let i = 0; i < 128 * 128; i++) {
         const cell = cells[i];
         input.push(cell.classList.contains('drawn') ? 1 : 0);
     }
-    return [input]; // Wrap in array for matrix operations
+    return input;
 }
 
-// Create target output for a specific digit (0-9)
-function createTarget(digit) {
-    const target = new Array(10).fill(0);
-    target[digit] = 1;
-    return [target];
-}
-
-// Initialize neural network
-const inputSize = 128 * 128; // 16384 input neurons (one for each cell)
-const hiddenSize = 64; // Hidden layer size
-const outputSize = 10; // 10 output neurons (one for each digit 0-9)
-const neuralNetwork = new SimpleNeuralNetwork(inputSize, hiddenSize, outputSize);
-
-// Load training data from localStorage
-let trainingData = JSON.parse(localStorage.getItem('neuralNetworkTrainingData')) || [];
-
-// Save training data to localStorage
-function saveTrainingData() {
-    localStorage.setItem('neuralNetworkTrainingData', JSON.stringify(trainingData));
-}
-
-// Add training example for a specific digit
-function addTrainingExample(digit) {
-    const input = gridToInput();
-    const target = createTarget(digit);
-    
-    trainingData.push({ input, target });
-    saveTrainingData();
-    
-    console.log(`Added training example for digit ${digit}. Total examples: ${trainingData.length}`);
-    
-    // Show feedback to user
-    const resultDiv = document.getElementById('predictionResult') || createResultDiv();
-    resultDiv.textContent = `Added training example for ${digit}. Total: ${trainingData.length}`;
-    resultDiv.style.color = '#4CAF50';
-    
-    setTimeout(() => {
-        resultDiv.textContent = '';
-    }, 2000);
-}
-
-// Create result div if it doesn't exist
-function createResultDiv() {
-    const div = document.createElement('div');
-    div.id = 'predictionResult';
-    div.style.marginTop = '15px';
-    div.style.padding = '10px';
-    div.style.fontSize = '18px';
-    div.style.fontWeight = 'bold';
-    div.style.textAlign = 'center';
-    div.style.minHeight = '30px';
-    document.querySelector('.drawing-container').appendChild(div);
-    return div;
-}
-
-// Train the network
-function trainNetwork() {
-    if (trainingData.length === 0) {
-        alert('Please add some training examples first!');
-        return;
-    }
-    
-    const trainButton = document.getElementById('trainButton');
-    const resultDiv = document.getElementById('predictionResult') || createResultDiv();
-    
-    trainButton.disabled = true;
-    trainButton.textContent = 'Training...';
-    
-    // Train in batches to avoid blocking the UI
-    let epoch = 0;
-    const totalEpochs = 100;
-    
-    function trainBatch() {
-        for (let i = 0; i < 10; i++) { // Train 10 epochs at a time
-            if (epoch >= totalEpochs) {
-                resultDiv.textContent = 'Training complete!';
-                resultDiv.style.color = '#4CAF50';
-                trainButton.disabled = false;
-                trainButton.textContent = 'Train';
-                return;
-            }
-            
-            for (const data of trainingData) {
-                neuralNetwork.train(data.input, data.target);
-            }
-            epoch++;
-        }
-        
-        resultDiv.textContent = `Training... ${epoch}/${totalEpochs} epochs complete`;
-        resultDiv.style.color = '#FF9800';
-        setTimeout(trainBatch, 10); // Continue training after 10ms
-    }
-    
-    trainBatch();
-}
-
-// Predict the digit
-function predictDigit() {
-    const input = gridToInput();
-    const prediction = neuralNetwork.predict(input);
-    
-    // Find the digit with highest probability
-    let maxIndex = 0;
-    let maxValue = prediction[0];
-    for (let i = 1; i < prediction.length; i++) {
-        if (prediction[i] > maxValue) {
-            maxValue = prediction[i];
-            maxIndex = i;
-        }
-    }
-    
-    console.log('Prediction:', maxIndex, 'Confidence:', maxValue.toFixed(3));
-    console.log('All probabilities:', prediction.map(p => p.toFixed(3)));
-    
-    return { digit: maxIndex, confidence: maxValue, probabilities: prediction };
-}
-
-// Add event listeners for digit buttons
+// Add event listeners for digit buttons (for data collection)
 document.addEventListener('DOMContentLoaded', () => {
-    // Add training example buttons (0-9)
+    // Add training example buttons (0-9) - for data collection only
     for (let i = 0; i <= 9; i++) {
         const button = document.getElementById(`${i}Button`);
         if (button) {
-            button.addEventListener('click', () => addTrainingExample(i));
+            button.addEventListener('click', () => {
+                // Collect training data (for future use)
+                const input = gridToInput();
+                const target = new Array(10).fill(0);
+                target[i] = 1;
+                
+                // Store in localStorage for later extraction
+                let trainingData = JSON.parse(localStorage.getItem('neuralNetworkTrainingData')) || [];
+                trainingData.push({ input: [input], target: [target] });
+                localStorage.setItem('neuralNetworkTrainingData', JSON.stringify(trainingData));
+                
+                console.log(`Added training example for digit ${i}. Total: ${trainingData.length}`);
+                
+                // Show feedback
+                const resultDiv = document.getElementById('predictionResult') || createResultDiv();
+                resultDiv.textContent = `Added training example for ${i}. Total: ${trainingData.length}`;
+                resultDiv.style.color = '#4CAF50';
+                
+                setTimeout(() => {
+                    resultDiv.textContent = '';
+                }, 2000);
+            });
         }
     }
     
@@ -424,11 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const guessButton = document.getElementById('guessButton');
     if (guessButton) {
         guessButton.addEventListener('click', () => {
-            if (trainingData.length === 0) {
-                alert('Please add some training examples first!');
-                return;
-            }
-            
             const result = predictDigit();
             const resultDiv = document.getElementById('predictionResult') || createResultDiv();
             resultDiv.textContent = `Predicted: ${result.digit} (Confidence: ${(result.confidence * 100).toFixed(1)}%)`;
@@ -436,19 +235,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Add train button functionality
-    const trainButton = document.getElementById('trainButton');
-    if (trainButton) {
-        trainButton.addEventListener('click', trainNetwork);
-    }
-    
-    // Show initial training data count
-    if (trainingData.length > 0) {
-        const resultDiv = createResultDiv();
-        resultDiv.textContent = `Loaded ${trainingData.length} training examples`;
-        resultDiv.style.color = '#2196F3';
-        setTimeout(() => {
-            resultDiv.textContent = '';
-        }, 2000);
+    // Create result div if it doesn't exist
+    function createResultDiv() {
+        const div = document.createElement('div');
+        div.id = 'predictionResult';
+        div.style.marginTop = '15px';
+        div.style.padding = '10px';
+        div.style.fontSize = '18px';
+        div.style.fontWeight = 'bold';
+        div.style.textAlign = 'center';
+        div.style.minHeight = '30px';
+        document.querySelector('.drawing-container').appendChild(div);
+        return div;
     }
 }); 
