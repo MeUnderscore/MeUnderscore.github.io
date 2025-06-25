@@ -116,12 +116,6 @@ class DigitRecognizer:
             'probabilities': probabilities.tolist()
         }
     
-    def save_model(self, filename='digit_model.pkl'):
-        """Save the trained model"""
-        with open(filename, 'wb') as f:
-            pickle.dump(self.model, f)
-        print(f"Model saved to {filename}")
-    
     def save_model_json(self, filename='digit_model.json'):
         """Save the trained model in JSON format for web use"""
         model_data = {
@@ -143,13 +137,6 @@ class DigitRecognizer:
             json.dump(model_data, f, indent=2)
         
         print(f"Model saved to {filename} (JSON format for web)")
-    
-    def load_model(self, filename='digit_model.pkl'):
-        """Load a trained model"""
-        with open(filename, 'rb') as f:
-            self.model = pickle.load(f)
-        self.trained = True
-        print(f"Model loaded from {filename}")
 
 def main():
     print("=== Digit Recognition AI Training ===")
