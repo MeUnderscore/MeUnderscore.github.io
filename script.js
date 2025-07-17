@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         guessButton.addEventListener('click', async () => {
             const result = await predictDigit();
             const resultDiv = document.getElementById('predictionResult') || createResultDiv();
-            resultDiv.textContent = `Predicted: ${result.digit} (Confidence: ${(result.confidence * 100).toFixed(1)}%)`;
+            resultDiv.textContent = `Predicted: ${result.digit}`;
             resultDiv.style.color = '#333';
         });
     }
