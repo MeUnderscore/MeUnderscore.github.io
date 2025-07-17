@@ -35,6 +35,28 @@ body {
     background-color: black;
 }
 
+.mnist-grid {
+    width: 644px;
+    height: 644px;
+    border: 2px solid #333;
+    background-color: white;
+    cursor: crosshair;
+    display: grid;
+    grid-template-columns: repeat(28, 23px);
+    grid-template-rows: repeat(28, 23px);
+}
+
+.mnist-cell {
+    width: 23px;
+    height: 23px;
+    background-color: white;
+    border: none;
+}
+
+.mnist-cell.drawn {
+    background-color: black;
+}
+
 .clear-button {
     margin-top: 20px;
     padding: 10px 20px;
@@ -71,5 +93,37 @@ body {
 }
 
 .guess-button:hover {
+    background-color: #45a049;
+}
+
+.mnist-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.mnist-button:hover {
+    background-color: #45a049;
+} 
+
+.standard-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.standard-button:hover {
     background-color: #45a049;
 } 
