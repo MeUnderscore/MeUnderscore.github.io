@@ -1,2 +1,3 @@
 - This was a project to learn how to create a website using GitHub.
-- - The website allows the user to draw a number, then uses a model I trained to predict what number was drawn.
+- The website allows the user to draw a number, then uses a model I trained to predict what number was drawn.
+- This project was made in Cursor with the help of its AI tools.
